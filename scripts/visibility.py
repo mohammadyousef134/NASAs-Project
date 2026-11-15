@@ -7,8 +7,8 @@ STEP_MIN = 10 # for every 10 min where the sun and earth are
 START = "2027-01-01 00:00:00 UTC"
 N_DAYS = 730
 # 365 + 365 
-MISSION_DAYS = 6.5
-# estimated number 6.5 mission
+MISSION_DAYS = 14
+# estimated number 14 mission
 R_MOON_KM, R_SUN_KM, R_EARTH_KM = 1737.4, 695700.0, 6378.1
 EARTH_MARGIN_DEG = 0.0           # extra clearance required for comms
 
@@ -31,7 +31,7 @@ horizons = json.load(open(ROOT / "public" / "horizons.json")) # load the horizon
 
 
 
-# this is used to find the longest sun lit or connection with the earth could be more than 6.5 days but it's simple for the presentation purposes 
+# this is used to find the longest sun lit or connection with the earth could be more than 14 days but it's simple for the presentation purposes 
 # [0,+1,0,-1,1,-1]
 # [1,3][4,5]
 # longest is [1,3] = 3-1 = 2 max non interrupted sit-connection
@@ -87,7 +87,7 @@ for k, (sid, s) in enumerate(horizons.items()):
     flags[k] = sun_vis.astype(np.uint8) | (earth_vis.astype(np.uint8) << 1)
 
     cs = np.concatenate(([0], np.cumsum(sun_vis)))
-    ok = (cs[W:] - cs[:-W]) == W                                    # 6.5 days of continuous sun
+    ok = (cs[W:] - cs[:-W]) == W                                    # 14 days of continuous sun
     stats[sid] = dict(
         name=s["name"],
         power_pct=round(float(sun_frac.mean() * 100), 1),
@@ -101,7 +101,7 @@ for k, (sid, s) in enumerate(horizons.items()):
     t_ = stats[sid]
     print(f"{s['name']:22s} power {t_['power_pct']:5.1f}%  comms {t_['connection_pct']:5.1f}%  "
           f"dark {t_['longest_dark_h']:6.1f} h  blackout {t_['longest_blackout_h']:6.1f} h  "
-          f"6.5d-sun starts {t_['pct_starts_with_6p5d_sun']:5.1f}%")
+          f"14d-sun starts {t_['pct_starts_with_6p5d_sun']:5.1f}%")
 
 
 # save all the calculated visibilities here once 

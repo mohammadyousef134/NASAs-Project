@@ -23,7 +23,7 @@
    "both_pct": 43.7,
    "longest_dark_h": 313.8,
    "longest_blackout_h": 308.7,
-   "pct_starts_with_6p5d_sun": 60.0
+   "pct_starts_with_6p5d_sun": 52.1
   },
   "connecting": {
    "name": "Connecting Ridge",
@@ -33,7 +33,7 @@
    "both_pct": 48.2,
    "longest_dark_h": 326.7,
    "longest_blackout_h": 315.2,
-   "pct_starts_with_6p5d_sun": 71.0
+   "pct_starts_with_6p5d_sun": 59.0
   },
   "de_gerlache": {
    "name": "de Gerlache Rim",
@@ -43,7 +43,7 @@
    "both_pct": 47.5,
    "longest_dark_h": 271.3,
    "longest_blackout_h": 301.7,
-   "pct_starts_with_6p5d_sun": 64.2
+   "pct_starts_with_6p5d_sun": 47.1
   },
   "haworth": {
    "name": "Haworth",
@@ -63,7 +63,7 @@
    "both_pct": 22.1,
    "longest_dark_h": 503.2,
    "longest_blackout_h": 408.0,
-   "pct_starts_with_6p5d_sun": 22.4
+   "pct_starts_with_6p5d_sun": 3.7
   },
   "malapert": {
    "name": "Malapert Massif",
@@ -73,7 +73,7 @@
    "both_pct": 43.9,
    "longest_dark_h": 372.7,
    "longest_blackout_h": 186.7,
-   "pct_starts_with_6p5d_sun": 38.1
+   "pct_starts_with_6p5d_sun": 13.1
   },
   "nobile": {
    "name": "Nobile Rim",
@@ -83,7 +83,7 @@
    "both_pct": 0.0,
    "longest_dark_h": 562.7,
    "longest_blackout_h": 17520.0,
-   "pct_starts_with_6p5d_sun": 5.9
+   "pct_starts_with_6p5d_sun": 0.0
   },
   "amundsen": {
    "name": "Amundsen Rim",
@@ -93,7 +93,7 @@
    "both_pct": 25.5,
    "longest_dark_h": 419.8,
    "longest_blackout_h": 391.2,
-   "pct_starts_with_6p5d_sun": 32.1
+   "pct_starts_with_6p5d_sun": 7.8
   }
  }
 }

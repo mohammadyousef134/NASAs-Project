@@ -31,7 +31,7 @@ from pathlib import Path
 import numpy as np
 
 # ---------------------------------------------------------------- the rules (change the numbers here)
-WINDOW_H = 156                 # 6.5 days, the longest planned stay on the surface (Artemis III)
+WINDOW_H = 336                 # 6.5 days, the longest planned stay on the surface (Artemis III)
 W_POWER, W_EARTH, W_CONT = 50, 30, 20     # points: power, Earth link, no long darkness  (total 100)
 DARK_LIMIT_H = 48              # warning if the lander would sit in darkness longer than this (assumption)
 GAP_LIMIT_H = 48               # warning if there is no Earth link for longer than this (assumption)
