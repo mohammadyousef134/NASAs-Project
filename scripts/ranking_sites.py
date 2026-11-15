@@ -31,7 +31,7 @@ from pathlib import Path
 import numpy as np
 
 # ---------------------------------------------------------------- the rules (change the numbers here)
-WINDOW_H = 336                 # 6.5 days, the longest planned stay on the surface (Artemis III)
+WINDOW_H = 336                 # 14 days (24 x 14), the stay length we chose. Must match WINDOW_H in main.js
 W_POWER, W_EARTH, W_CONT = 50, 30, 20     # points: power, Earth link, no long darkness  (total 100)
 DARK_LIMIT_H = 48              # warning if the lander would sit in darkness longer than this (assumption)
 GAP_LIMIT_H = 48               # warning if there is no Earth link for longer than this (assumption)
@@ -39,6 +39,7 @@ GOOD, FAIR = 70, 40            # verdict: score >= 70 good, >= 40 fair, below th
 MIN_EARTH_PCT = 25             # knock-out: Earth in view less than this share of the time -> NO-GO (no link, no mission)
 MIN_SUN_PCT = 25               # knock-out: Sun above the terrain less than this share of the time -> NO-GO (no power)
 SUN_R_DEG = 0.267              # apparent radius of the Sun's disc seen from the Moon (same value as the website)
+RM_KM, EARTH_KM, SUN_KM = 1737.4, 6371.0, 695700.0   # Moon radius, Earth radius, Sun radius (km)
 STRIDE = 17                    # floats per hour in ephemeris.bin: sun[3] earth[3] rotation[9] sun_km earth_km
 
 RULES = [
@@ -47,6 +48,7 @@ RULES = [
     f"Continuity: up to {W_CONT} points = {W_CONT} x (1 - longest darkness / stay). A long blackout costs points.",
     f"Knock-out: Earth in view under {MIN_EARTH_PCT} % of the time, or Sun under {MIN_SUN_PCT} %, makes the site NO-GO. It ranks below every valid site.",
     f"Verdict: {GOOD}+ good, {FAIR}+ fair, below {FAIR} poor. Warning if darkness or no Earth link lasts over {DARK_LIMIT_H} h.",
+    "The Earth in front of the Sun (a lunar eclipse seen from the Moon) counts as lost sunlight.",
     "Ties are broken by more sunlight.",
 ]
 
@@ -99,6 +101,23 @@ def load_ephemeris(public):
     return meta, f.reshape(n, STRIDE)
 
 
+# ---------------------------------------------------------------- Earth in front of the Sun (eclipse seen from the Moon)
+def disc_overlap(r1, r2, d):
+    """Share of disc 1 (the Sun, radius r1) covered by disc 2 (the Earth, radius r2); d = distance of the centres. Radians, numpy arrays.
+    Same formula as discOverlap() in main.js."""
+    r1, r2, d = np.broadcast_arrays(np.asarray(r1, float), np.asarray(r2, float), np.asarray(d, float))
+    out = np.zeros(d.shape)
+    inside = d <= np.abs(r1 - r2)
+    out[inside] = np.where(r2[inside] >= r1[inside], 1.0, (r2[inside] / r1[inside]) ** 2)
+    part = (d < r1 + r2) & ~inside
+    r1p, r2p, dp = r1[part], r2[part], d[part]
+    a = r1p ** 2 * np.arccos(np.clip((dp ** 2 + r1p ** 2 - r2p ** 2) / (2 * dp * r1p), -1, 1))
+    b = r2p ** 2 * np.arccos(np.clip((dp ** 2 + r2p ** 2 - r1p ** 2) / (2 * dp * r2p), -1, 1))
+    c = 0.5 * np.sqrt(np.maximum((-dp + r1p + r2p) * (dp + r1p - r2p) * (dp - r1p + r2p) * (dp + r1p + r2p), 0))
+    out[part] = (a + b - c) / (np.pi * r1p ** 2)
+    return out
+
+
 # ---------------------------------------------------------------- step 2: the sky of one site, hour by hour
 def hourly_state(site, eph):
     """Returns (sun_fraction[N], earth_in_view[N]) for every hour, the same maths as evalSite() in main.js."""
@@ -131,6 +150,12 @@ def hourly_state(site, eph):
     s_az, s_el = az_el(sun_m)
     e_az, e_el = az_el(earth_m)
     sun_frac = np.clip((s_el + SUN_R_DEG - skyline(s_az)) / (2 * SUN_R_DEG), 0.0, 1.0)
+    # Earth eclipse, seen from the site (not from the Moon's centre)
+    S = eph[:, 15, None] * sun_m - RM_KM * u
+    E = eph[:, 16, None] * earth_m - RM_KM * u
+    sl, el_ = np.linalg.norm(S, axis=1), np.linalg.norm(E, axis=1)
+    sep = np.arccos(np.clip((S * E).sum(axis=1) / (sl * el_), -1, 1))
+    sun_frac = sun_frac * (1.0 - disc_overlap(np.arcsin(SUN_KM / sl), np.arcsin(EARTH_KM / el_), sep))
     earth_up = e_el > skyline(e_az)
     return sun_frac, earth_up
 
