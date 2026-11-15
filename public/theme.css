@@ -1,0 +1,507 @@
+/* theme.css  -  glass look. Grey and white only. Loaded AFTER the old <style>, so it only restyles; no logic changes. */
+:root {
+    --glass: rgba(18, 20, 24, 0.46);
+    --glass-strong: rgba(14, 16, 20, 0.66);
+    --edge: rgba(255, 255, 255, 0.14);
+    --edge-soft: rgba(255, 255, 255, 0.07);
+    --text: #f4f5f7;
+    --muted: rgba(244, 245, 247, 0.58);
+    --faint: rgba(244, 245, 247, 0.36);
+    --r: 18px;
+}
+
+html,
+body {
+    font: 13px/1.45 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* panels: frosted glass with a soft top highlight */
+.panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 38%), var(--glass);
+    border: 1px solid var(--edge);
+    border-radius: var(--r);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    padding: 16px 18px;
+}
+
+#hud h1 {
+    font-size: 15px;
+    letter-spacing: .02em;
+    margin-bottom: 10px;
+}
+
+#date {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin-bottom: 10px;
+}
+
+.sub,
+.note,
+.lgl,
+#rWhen {
+    color: var(--muted);
+}
+
+.sub {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    margin: 12px 0 6px;
+}
+
+.note {
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+/* buttons and selects: glass pills */
+button,
+select {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text);
+    border: 1px solid var(--edge-soft);
+    border-radius: 999px;
+    padding: 6px 13px;
+    font-weight: 500;
+    transition: background .15s, border-color .15s, transform .1s;
+}
+
+button:hover,
+select:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--edge);
+}
+
+button:active {
+    transform: scale(.97);
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, .55);
+    outline-offset: 2px;
+}
+
+select {
+    padding-right: 8px;
+}
+
+select option {
+    background: #15171b;
+    color: #fff;
+}
+
+.sites button {
+    border-radius: 12px;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.sites button.sel,
+#lock.sel,
+#free.sel {
+    background: rgba(255, 255, 255, 0.92);
+    color: #0b0c0e;
+    border-color: transparent;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.18);
+}
+
+#play {
+    background: rgba(255, 255, 255, 0.92);
+    color: #0b0c0e;
+    border-color: transparent;
+    font-weight: 600;
+    min-width: 64px;
+}
+
+#play:hover {
+    background: #fff;
+}
+
+#rOpen {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--edge);
+}
+
+#close,
+#rClose {
+    padding: 2px 9px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* sliders */
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 22px;
+    background: transparent;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.22);
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    margin-top: -6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .5);
+    border: 0;
+}
+
+input[type=range]::-moz-range-track {
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.22);
+}
+
+input[type=range]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 0;
+}
+
+/* calendar popup */
+#cal {
+    background: var(--glass-strong);
+    border: 1px solid var(--edge);
+    border-radius: 16px;
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+}
+
+.calGrid .day {
+    border-radius: 10px;
+}
+
+.calGrid .day.cur {
+    background: #fff;
+    color: #0b0c0e;
+    border-color: transparent;
+    font-weight: 600;
+}
+
+/* dashboard cards (KPI tiles) */
+.kpis {
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.kpi {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--edge-soft);
+    border-radius: 14px;
+    padding: 12px 14px;
+}
+
+.kpi .t {
+    color: var(--faint);
+    font-size: 10.5px;
+    letter-spacing: .09em;
+}
+
+.kpi .v {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    margin: 4px 0 2px;
+}
+
+.kpi .d {
+    color: var(--muted);
+}
+
+.ok {
+    color: #fff;
+}
+
+.mid {
+    color: rgba(255, 255, 255, .72);
+}
+
+.bad {
+    color: rgba(255, 255, 255, .4);
+}
+
+canvas.v {
+    border-radius: 14px;
+    border: 1px solid var(--edge-soft);
+    background: rgba(0, 0, 0, .45);
+}
+
+#photo {
+    border-radius: 14px;
+}
+
+table.w td {
+    padding: 5px 0;
+    border-top: 1px solid var(--edge-soft);
+    color: var(--muted);
+}
+
+table.w tr:first-child td {
+    border-top: 0;
+}
+
+table.w td:last-child {
+    color: var(--text);
+    font-weight: 500;
+}
+
+#card .coords {
+    color: var(--faint);
+}
+
+#card h2,
+#rPanel h2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+}
+
+#legBar {
+    border-radius: 6px;
+    border: 0;
+    height: 10px;
+}
+
+/* ranking: comparison table as rows of cards */
+#rPanel {
+    width: 470px;
+}
+
+.rdate input {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--edge-soft);
+    border-radius: 999px;
+    padding: 7px 14px;
+    color: var(--text);
+}
+
+#rTable {
+    border-collapse: separate;
+    border-spacing: 0 6px;
+}
+
+#rTable th {
+    color: var(--faint);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    padding: 0 8px 2px;
+}
+
+#rTable td {
+    border: 0;
+    padding: 10px 8px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+}
+
+#rTable td:first-child {
+    border-radius: 12px 0 0 12px;
+    color: var(--faint);
+}
+
+#rTable td:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+#rTable tr[data-i]:hover td {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+#rTable tr.top td {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18);
+}
+
+#rTable tr.sel td {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+#rTable tr.nogo td {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--faint);
+}
+
+#rTable td.sc .bar {
+    height: 3px;
+    border-radius: 3px;
+    bottom: 4px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, .35), #fff);
+}
+
+#rTable td.sc .vd {
+    color: var(--faint);
+}
+
+#rReport {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--edge-soft);
+    border-radius: 14px;
+    padding: 10px 12px;
+    color: rgba(255, 255, 255, .86);
+}
+
+#rPanel details {
+    border-top: 1px solid var(--edge-soft);
+}
+
+#rPanel summary {
+    color: var(--text);
+}
+
+ol.rl {
+    color: var(--muted);
+}
+
+/* thin scrollbars */
+.panel {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .25) transparent;
+}
+
+/* labelled controls: every list says what it is for */
+.field {
+    margin: 10px 0 4px;
+}
+
+.field>label,
+#legend>label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: var(--text);
+}
+
+.field>label span,
+#legend>label span {
+    margin-left: 6px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--faint);
+    font-size: 11px;
+}
+
+.field select,
+#legend select {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 12px;
+    padding: 9px 34px 9px 12px;
+    font-size: 13px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.07) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23ffffff' stroke-opacity='.75' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+}
+
+.field select:hover,
+#legend select:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+.field .hint {
+    margin-top: 5px;
+    font-size: 11px;
+    color: var(--faint);
+    line-height: 1.4;
+}
+
+#legend {
+    margin: 8px 0 4px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--edge-soft);
+}
+
+#legend select {
+    margin-top: 2px;
+}
+
+#speed {
+    min-width: 0;
+}
+
+/* line of sight box in the site card */
+.sight {
+    margin: 10px 0 4px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--edge-soft);
+}
+
+.sightHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+}
+
+.sightHead label {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.srow {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin: 4px 0;
+    font-size: 12.5px;
+    line-height: 1.35;
+}
+
+.srow .dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-top: 4px;
+}
+
+.dot.sunc {
+    background: #ffd98a;
+}
+
+.dot.earthc {
+    background: #7fc0ff;
+}
+
+.sok {
+    color: rgba(255, 255, 255, .92);
+}
+
+.sbad {
+    color: #ff8b80;
+}

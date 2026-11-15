@@ -90,6 +90,7 @@
     table.w { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin-top: 6px; }
     table.w td { padding: 2px 0; color: #bdbdbd; } table.w td:last-child { text-align: right; color: #f0f0f0; }
   </style>
+  <link rel="stylesheet" href="theme.css" />
   <script type="importmap">
   {
     "imports": {
@@ -116,36 +117,43 @@
         <option value="720">30 days / s</option>
         <option value="2160">3 months / s</option>
       </select>
-      <label><input id="grat" type="checkbox" checked /> grid</label>
+      <label><input id="grat" type="checkbox" /> grid</label>
     </div>
-    <div class="row">
+    <div class="field">
+      <label for="surface">Ground <span>how the south pole looks</span></label>
       <select id="surface" title="How the south pole is drawn">
-        <option value="photo">Surface: Moon photo</option>
-        <option value="heat" disabled>Surface: height, colours</option>
-        <option value="gray" disabled>Surface: height, grey (like the real Moon)</option>
+        <option value="photo">Moon photo</option>
+        <option value="heat" disabled>Height heatmap (colours)</option>
+        <option value="gray" disabled>Height in grey (like the real Moon)</option>
       </select>
+      <div class="hint">Heatmap: every colour is a ground height, from low to high.</div>
     </div>
     <div id="legend">
       <div id="legBar"></div>
       <div class="lgl"><span id="legLo"></span><span>ground height</span><span id="legHi"></span></div>
       <div class="note" id="legNote"></div>
+      <label for="relief">3D relief <span>raise the ground</span></label>
       <select id="relief" title="Raise the ground in 3D from the real heights">
-        <option value="0">3D relief: off (flat)</option>
-        <option value="1" selected>3D relief: true height</option>
+        <option value="0">Off (flat)</option>
+        <option value="1" selected>True height</option>
         <!-- <option value="3">3D relief: 3 times taller</option> -->
       </select>
     </div>
     <div class="note" id="heatNote"></div>
-    <div class="row">
+    <div class="field">
+      <label for="viewMode">View <span>what you see</span></label>
       <select id="viewMode" title="What to look at">
-        <option value="moon">Moon surface view</option>
+        <option value="moon">Moon close-up</option>
         <option value="earth">Earth &amp; Moon (true scale)</option>
         <option value="sun">Sun, Earth &amp; Moon (true scale)</option>
       </select>
+    </div>
+    <div class="field">
+      <label for="focus">Camera orbits <span>the object it turns around</span></label>
       <select id="focus" title="Orbit the camera around">
-        <option value="moon">Focus: Moon</option>
-        <option value="earth">Focus: Earth</option>
-        <option value="sun">Focus: Sun</option>
+        <option value="moon">Moon</option>
+        <option value="earth">Earth</option>
+        <option value="sun">Sun</option>
       </select>
     </div>
     <div class="row">
@@ -159,7 +167,7 @@
       <button id="vEarth">Earth side</button>
     </div>
     <div class="row">
-      <button id="rOpen" title="Pick a landing date and see the sites ranked for a 14-day stay">Site ranking</button>
+      <button id="rOpen" title="Pick a landing date and see the sites ranked for the stay">Site ranking</button>
     </div>
     <div class="sub">Sites (click a dot or a name)</div>
     <div class="sites" id="sites"></div>
@@ -185,9 +193,15 @@
       <button id="lookEarth">Earth</button>
     </div>
     <div class="note" id="viewNote"></div>
+    <div class="sight">
+      <div class="sightHead"><span>Line of sight</span><label><input id="sightOn" type="checkbox" checked /> show lines</label></div>
+      <div class="srow"><i class="dot sunc"></i><span id="sSun"></span></div>
+      <div class="srow"><i class="dot earthc"></i><span id="sEarth"></span></div>
+      <div class="note">In 3D: a long line = clear view. A short red line with a cross = the terrain blocks it.</div>
+    </div>
     <table class="w" id="stats"></table>
   </div>
-  <!-- Best landing site: pick a date, see the 8 sites ranked for the next 14 days -->
+  <!-- Best landing site: pick a date, see the 8 sites ranked for the next 6.5 days -->
   <div id="rPanel" class="panel">
     <button id="rClose">×</button>
     <h2>Best landing site</h2>
