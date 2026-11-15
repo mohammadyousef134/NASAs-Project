@@ -7,6 +7,7 @@ import { initRanking } from './ranking.js';
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
+const WINDOW_H = 336; // 14 days, must match WINDOW_H in rank_sites.py
 const STRIDE = 17;          // floats per row in ephemeris.bin
 // row = sun[3] earth[3] rot_MOON_ME_to_J2000[9, row-major] sun_dist earth_dist (km)
 const EARTH_DIST = 8;       // overview scale: Moon radius = 1 unit
@@ -1108,8 +1109,8 @@ function updateCard(hour, now) {
   $('stats').innerHTML =
     `<tr><td>${sunNow ? 'Sun sets in' : 'Sun rises in'}</td><td>${fmtH(nSun)}</td></tr>` +
     `<tr><td>${earthNow ? 'Earth link lost in' : 'Earth link starts in'}</td><td>${fmtH(nEarth)}</td></tr>` +
-    `<tr><td>Next 6.5 days: Sun visible</td><td>${f1(pct(scan.sunUp, 156))} %</td></tr>` +
-    `<tr><td>Next 6.5 days: Earth visible</td><td>${f1(pct(scan.earthUp, 156))} %</td></tr>` +
+    `<tr><td>Next 14 days: Sun visible</td><td>${f1(pct(scan.sunUp, WINDOW_H))} %</td></tr>` +
+    `<tr><td>Next 14 days: Earth visible</td><td>${f1(pct(scan.earthUp, WINDOW_H))} %</td></tr>` +
     `<tr><td>Next 30 days: Sun visible</td><td>${f1(pct(scan.sunUp, SCAN_H))} %</td></tr>` +
     `<tr><td>Next 30 days: Earth visible</td><td>${f1(pct(scan.earthUp, SCAN_H))} %</td></tr>`;
   $('viewNote').textContent =
