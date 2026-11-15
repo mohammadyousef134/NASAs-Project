@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Polar Sky Planner</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #000000; overflow: hidden;
+      font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: #f0f0f0; }
+    canvas#scene { display: block; }
+    input[type=range], input[type=checkbox] { accent-color: #d0d0d0; }   /* sliders and ticks in grey, not browser blue */
+    .panel { position: fixed; padding: 12px 14px; background: rgba(10, 10, 10, 0.88);
+      border: 1px solid #3a3a3a; border-radius: 10px; backdrop-filter: blur(6px); box-sizing: border-box; }
+    #hud { top: 12px; left: 12px; width: 300px; }
+    #hud h1 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+    #date { font-size: 16px; font-variant-numeric: tabular-nums; margin-bottom: 6px; }
+    input[type=range] { width: 100%; margin: 4px 0 8px; }
+    .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+    button, select { background: #1a1a1a; color: #f0f0f0; border: 1px solid #4a4a4a;
+      border-radius: 6px; padding: 4px 9px; font: inherit; cursor: pointer; }
+    button:hover { background: #2c2c2c; }
+    .sites button { width: 100%; text-align: left; margin-bottom: 4px; }
+    .sites button.sel { border-color: #ffffff; color: #ffffff; font-weight: 600; }
+    #lock.sel { border-color: #ffffff; color: #ffffff; }
+    #free.sel { border-color: #ffffff; color: #ffffff; }
+    .read { font-variant-numeric: tabular-nums; color: #bdbdbd; margin: 6px 0; }
+    .read b { color: #f0f0f0; font-weight: 600; }
+    .sub { color: #8a8a8a; font-size: 12px; margin: 8px 0 4px; }
+    #err { color: #dddddd; }
+    #legend { display: none; margin: 6px 0; }
+    #legBar { height: 12px; border-radius: 3px; border: 1px solid #3a3a3a; }
+    .lgl { display: flex; justify-content: space-between; color: #bdbdbd; font-size: 11px; margin-top: 2px; }
+
+    .cal { display: block; margin: 4px 0 6px; font-size: 12px; color: #8a8a8a; }
+    .cal { position: relative; }
+    #cal { display: none; position: absolute; left: 0; top: 30px; z-index: 20; width: 248px; padding: 10px; background: #111111; border: 1px solid #4a4a4a; border-radius: 10px; box-shadow: 0 8px 30px #000a; }
+    .calHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; color: #f0f0f0; font-size: 13px; }
+    .calHead button { padding: 2px 10px; }
+    .calSel { display: flex; gap: 4px; }
+    .calSel select { background: #1a1a1a; color: #f0f0f0; border: 1px solid #4a4a4a; border-radius: 6px; padding: 3px 4px; font-size: 12px; }
+    .calGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; }
+    .calGrid i { font-style: normal; font-size: 10px; color: #8a8a8a; }
+    .calGrid .day { padding: 5px 0; font-size: 12px; border-radius: 6px; }
+    .calGrid .day.cur { border-color: #ffffff; color: #ffffff; }
+    .calGrid .day.lock { opacity: .35; cursor: not-allowed; font-size: 10px; }
+    .calGrid .day.off { opacity: .15; cursor: default; }
+    .calNote { margin-top: 8px; font-size: 11px; color: #8a8a8a; line-height: 1.35; border-radius: 6px; padding: 4px; }
+    .calNote.flash { background: #333333; color: #ffffff; }
+    /* best landing site (ranking) */
+    #rPanel { display: none; top: 12px; left: 332px; width: 450px; max-height: calc(100% - 24px); overflow-y: auto; z-index: 30; }
+    #rPanel h2 { margin: 0 0 2px; font-size: 16px; font-weight: 600; }
+    #rClose { position: absolute; top: 8px; right: 8px; padding: 1px 8px; }
+    .rdate { display: flex; gap: 6px; align-items: center; margin: 8px 0 4px; }
+    .rdate input { flex: 1; background: #1a1a1a; color: #f0f0f0; border: 1px solid #4a4a4a; border-radius: 6px; padding: 5px 8px; font: inherit; color-scheme: dark; }
+    #rWhen { color: #8a8a8a; font-size: 11px; margin-bottom: 6px; }
+    #rTable { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    #rTable th { text-align: left; color: #8a8a8a; font-size: 11px; font-weight: 500; padding: 2px 4px; }
+    #rTable td { padding: 5px 4px; border-top: 1px solid #262626; color: #bdbdbd; }
+    #rTable tr[data-i] { cursor: pointer; }
+    #rTable tr[data-i]:hover td { background: #1a1a1a; }
+    #rTable tr.top td { color: #ffffff; font-weight: 600; }
+    #rTable tr.sel td { background: #262626; }
+    #rTable tr.nogo td { color: #6a6a6a; }
+    #rTable td.nm { max-width: 130px; }
+    #rTable td.sc { position: relative; white-space: nowrap; }
+    #rTable td.sc .bar { position: absolute; left: 4px; bottom: 2px; height: 2px; background: #cfcfcf; max-width: calc(100% - 8px); }
+    #rTable td.sc .vd { color: #8a8a8a; font-size: 11px; font-weight: 400; }
+    #rReport { margin: 10px 0 6px; font-size: 12.5px; line-height: 1.45; color: #d8d8d8; }
+    #rReport div { margin-bottom: 4px; }
+    #rPanel details { margin-top: 8px; border-top: 1px solid #262626; padding-top: 6px; }
+    #rPanel summary { cursor: pointer; color: #f0f0f0; font-weight: 600; }
+    #rPanel .sub { color: #8a8a8a; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; margin: 8px 0 2px; }
+    ol.rl { margin: 4px 0 0; padding-left: 18px; color: #bdbdbd; font-size: 12px; line-height: 1.4; }
+    #card { top: 12px; right: 12px; width: 400px; max-height: calc(100% - 24px); overflow-y: auto; display: none; }
+    #card h2 { margin: 0 0 2px; font-size: 16px; font-weight: 600; }
+    .lockbtn { margin: 2px 0 8px; }
+    #card .coords { color: #8a8a8a; margin-bottom: 8px; }
+    #close { position: absolute; top: 8px; right: 8px; padding: 1px 8px; }
+    .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+    .kpi { background: #0d0d0d; border: 1px solid #333333; border-radius: 8px; padding: 8px 10px; }
+    .kpi .t { color: #8a8a8a; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    .kpi .v { font-size: 18px; font-weight: 600; margin: 2px 0; font-variant-numeric: tabular-nums; }
+    .kpi .d { color: #bdbdbd; font-size: 12px; font-variant-numeric: tabular-nums; }
+    .ok { color: #ffffff; } .bad { color: #7a7a7a; } .mid { color: #bdbdbd; }
+    canvas.v { width: 100%; display: block; border-radius: 8px; border: 1px solid #333333; background: #000; }
+    #photo { width: 100%; border-radius: 8px; display: none; margin-bottom: 8px; }
+    .note { color: #8a8a8a; font-size: 11px; margin-top: 4px; }
+    .look { display: flex; gap: 6px; align-items: center; margin: 6px 0 2px; }
+    .look input { flex: 1; margin: 0; }
+    table.w { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin-top: 6px; }
+    table.w td { padding: 2px 0; color: #bdbdbd; } table.w td:last-child { text-align: right; color: #f0f0f0; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="hud" class="panel">
+    <h1>Polar Sky Planner</h1>
+    <div id="date">loading…</div>
+    <div class="cal">Go to date <button id="pick">…</button><div id="cal"></div></div>
+    <input id="t" type="range" min="0" max="1" step="0.25" value="0" />
+    <div class="row">
+      <button id="play">Play</button>
+      <select id="speed">
+        <option value="1">1 h / s</option>
+        <option value="6">6 h / s</option>
+        <option value="24" selected>1 day / s</option>
+        <option value="72">3 days / s</option>
+        <option value="168">1 week / s</option>
+        <option value="720">30 days / s</option>
+        <option value="2160">3 months / s</option>
+      </select>
+      <label><input id="grat" type="checkbox" checked /> grid</label>
+    </div>
+    <div class="row">
+      <select id="surface" title="How the south pole is drawn">
+        <option value="photo">Surface: Moon photo</option>
+        <option value="heat" disabled>Surface: height, colours</option>
+        <option value="gray" disabled>Surface: height, grey (like the real Moon)</option>
+      </select>
+    </div>
+    <div id="legend">
+      <div id="legBar"></div>
+      <div class="lgl"><span id="legLo"></span><span>ground height</span><span id="legHi"></span></div>
+      <div class="note" id="legNote"></div>
+      <select id="relief" title="Raise the ground in 3D from the real heights">
+        <option value="0">3D relief: off (flat)</option>
+        <option value="1" selected>3D relief: true height</option>
+        <!-- <option value="3">3D relief: 3 times taller</option> -->
+      </select>
+    </div>
+    <div class="note" id="heatNote"></div>
+    <div class="row">
+      <select id="viewMode" title="What to look at">
+        <option value="moon">Moon surface view</option>
+        <option value="earth">Earth &amp; Moon (true scale)</option>
+        <option value="sun">Sun, Earth &amp; Moon (true scale)</option>
+      </select>
+      <select id="focus" title="Orbit the camera around">
+        <option value="moon">Focus: Moon</option>
+        <option value="earth">Focus: Earth</option>
+        <option value="sun">Focus: Sun</option>
+      </select>
+    </div>
+    <div class="row">
+      <button id="free">Free fly</button>
+    </div>
+    <div class="note" id="freeHelp" style="display:none">Drag = look. W/S forward-back, A/D left-right, R/F up-down, Q/E roll, wheel = forward-back, Shift = slow. You slow down automatically near a surface.</div>
+    <div class="note" id="padNote" style="display:none"></div>
+    <div class="row">
+      <button id="vOver">Overview</button>
+      <button id="vPole">South pole</button>
+      <button id="vEarth">Earth side</button>
+    </div>
+    <div class="row">
+      <button id="rOpen" title="Pick a landing date and see the sites ranked for a 6.5-day stay">Site ranking</button>
+    </div>
+    <div class="sub">Sites (click a dot or a name)</div>
+    <div class="sites" id="sites"></div>
+    <div id="err"></div>
+  </div>
+
+  <div id="card" class="panel">
+    <button id="close" title="Close">×</button>
+    <h2 id="cName"></h2>
+    <div class="coords" id="cCoords"></div>
+    <button id="lock" class="lockbtn">Lock to the site</button>
+    <img id="photo" alt="Landing site" />
+    <div class="kpis">
+      <div class="kpi"><div class="t">Sunlight now</div><div class="v" id="kSun"></div><div class="d" id="kSunD"></div></div>
+      <div class="kpi"><div class="t">Earth link now</div><div class="v" id="kEarth"></div><div class="d" id="kEarthD"></div></div>
+    </div>
+    <div class="sub">View from the site (true angular scale)</div>
+    <canvas id="view" class="v" width="800" height="300"></canvas>
+    <div class="look">
+      <span>Look</span>
+      <input id="lookAz" type="range" min="0" max="360" step="1" value="0" />
+      <button id="lookSun">Sun</button>
+      <button id="lookEarth">Earth</button>
+    </div>
+    <div class="note" id="viewNote"></div>
+    <table class="w" id="stats"></table>
+  </div>
+  <!-- Best landing site: pick a date, see the 8 sites ranked for the next 6.5 days -->
+  <div id="rPanel" class="panel">
+    <button id="rClose">×</button>
+    <h2>Best landing site</h2>
+    <div class="note" id="rRange"></div>
+    <div class="rdate"><button id="rPrev" title="Previous day">‹</button><input id="rDate" type="date" /><button id="rNext" title="Next day">›</button></div>
+    <div id="rWhen"></div>
+    <table id="rTable"></table>
+    <div id="rReport"></div>
+    <details id="rRule"><summary>How is the score calculated?</summary><div id="rRuleText"></div></details>
+    <div class="note" id="rNote"></div>
+  </div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
