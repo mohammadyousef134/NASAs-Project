@@ -1,0 +1,82 @@
+[
+  {
+    "id": "shackleton",
+    "name": "Peak near Shackleton",
+    "lat": -89.78132728628123,
+    "lon": 204.7872104611145,
+    "x": -2780.0,
+    "y": -6020.0,
+    "height_m": 1737.4246826171875,
+    "snap_radius_km": 10
+  },
+  {
+    "id": "connecting",
+    "name": "Connecting Ridge",
+    "lat": -89.43904297841225,
+    "lon": 222.903586379619,
+    "x": -11580.0,
+    "y": -12460.0,
+    "height_m": 1958.6129150390625,
+    "snap_radius_km": 6
+  },
+  {
+    "id": "de_gerlache",
+    "name": "de Gerlache Rim",
+    "lat": -88.66444159068759,
+    "lon": 291.5859930818307,
+    "x": -37660.0,
+    "y": 14900.0,
+    "height_m": 1814.5126953125,
+    "snap_radius_km": 16
+  },
+  {
+    "id": "haworth",
+    "name": "Haworth",
+    "lat": -87.29973271371603,
+    "lon": 343.44147866727053,
+    "x": -23340.0,
+    "y": 78500.0,
+    "height_m": -1088.9041748046875,
+    "snap_radius_km": 17
+  },
+  {
+    "id": "faustini",
+    "name": "Faustini Rim A",
+    "lat": -87.12763233295722,
+    "lon": 65.28824883860129,
+    "x": 79140.0,
+    "y": 36420.0,
+    "height_m": 620.487548828125,
+    "snap_radius_km": 20
+  },
+  {
+    "id": "malapert",
+    "name": "Malapert Massif",
+    "lat": -85.98826911277553,
+    "lon": 2.062548122220002,
+    "x": 4380.0,
+    "y": 121620.0,
+    "height_m": 5173.18701171875,
+    "snap_radius_km": 8
+  },
+  {
+    "id": "nobile",
+    "name": "Nobile Rim",
+    "lat": -84.84624536033411,
+    "lon": 46.8967240722767,
+    "x": 114180.0,
+    "y": 106860.0,
+    "height_m": 2416.215087890625,
+    "snap_radius_km": 20
+  },
+  {
+    "id": "amundsen",
+    "name": "Amundsen Rim",
+    "lat": -82.92901991818572,
+    "lon": 78.34253280330763,
+    "x": 210260.0,
+    "y": 43380.0,
+    "height_m": 4125.0732421875,
+    "snap_radius_km": 50
+  }
+]
