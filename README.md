@@ -1,4 +1,4 @@
-# Polar Sky Planner
+# Lunar South Pole Visualizer
  
 **Compare Moon south pole landing sites and dates in seconds.**
 See where the Sun and Earth sit above the real terrain horizon, how long the light and the Earth link will last, and which site is best for a 14-day stay.
@@ -55,7 +55,7 @@ LOLA 40 m DEM ──► heat_tiles ──► pole_tiles / pole_tiles_gray
 ### Sun and Earth visibility
 An object is visible when it is above the skyline at its azimuth. The Moon has no atmosphere, so there is no refraction.
 - **Sun:** the apparent disc (radius about 0.267°) is treated as a disc, so sunrise and sunset are partial rather than instant. Sunlight is multiplied by the share of the disc left uncovered when the Earth passes in front of it (an eclipse seen from the Moon).
-- **Earth:** counted as visible when its above the horizon.
+- **Earth:** counted as visible when it's above the horizon.
 The same math runs in Python (`ranking_sites.py`) and in the browser (`evalSite()` in `main.js`).
  
 ### Ranking rules
@@ -135,7 +135,7 @@ data/              site definitions and the Artemis III candidate regions
 ## Limitations
 
 - Not all locations at the lunar south pole are clickable or rankable; only the candidate sites are.
-- The power figure counts hours of sunlight and battery size of the spacecraft.
+- The power figure estimates sunlight hours but does not include the spacecraft's battery percentage.
 - Ranking weights and thresholds are planning assumptions, not mission requirements.
 ## Data and credits
  
