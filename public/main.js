@@ -1299,7 +1299,7 @@ function makeSight(color) {
 const sight = { sun: makeSight(0xffd98a), earth: makeSight(0x7fc0ff) };
 const SIGHT_CLEAR = { sun: 0xffd98a, earth: 0x7fc0ff }, SIGHT_BLOCK = 0xff5a4d;
 window.addEventListener('resize', () => { for (const k of ['sun', 'earth']) sight[k].mat.resolution.set(window.innerWidth, window.innerHeight); });
-let sightOn = true;
+let sightOn = false;                 // the 3D sight lines are switched off
 const _sp = new THREE.Vector3(); const _st = new THREE.Vector3(); const _sd = new THREE.Vector3();
 function updateSight() {
   const on = sightOn && selected >= 0;
@@ -1326,6 +1326,65 @@ function updateSight() {
     s.cross.visible = !visible; s.cross.position.copy(e);
   }
 }
+// Compass radar in the site card: the sky seen from above. North is up. The centre is high in the sky (40 deg), the outer
+// ring is the horizon (0 deg), and the grey rim shows the terrain skyline. The wedge is what the panorama above is looking at.
+function drawRadar(site, ev, lookAz) {
+  const c = $('radar'); const g = c.getContext('2d');
+  const W = c.width, cx = W / 2, cy = W / 2, R = W / 2 - 34;
+  const EL_TOP = 40, EL_BOT = -6;                                       // elevation shown at the centre and at the edge
+  const rOf = (el) => R * (EL_TOP - THREE.MathUtils.clamp(el, EL_BOT, EL_TOP)) / (EL_TOP - 0);   // 0 deg elevation = R
+  const ang = (az) => (az - 90) * DEG;                                   // north up, clockwise
+  const px = (az, el) => [cx + rOf(el) * Math.cos(ang(az)), cy + rOf(el) * Math.sin(ang(az))];
+  g.clearRect(0, 0, W, W);
+  // sky disc
+  g.fillStyle = 'rgba(8,16,22,0.85)'; g.beginPath(); g.arc(cx, cy, R * 1.12, 0, 2 * Math.PI); g.fill();
+  // terrain: the area between the skyline and the horizon ring
+  g.beginPath();
+  for (let a = 0; a <= 360; a += 2) { const [x, y] = px(a, horizonAt(site, a % 360)); a ? g.lineTo(x, y) : g.moveTo(x, y); }
+  g.closePath(); g.moveTo(cx + R * 1.12, cy); g.arc(cx, cy, R * 1.12, 0, 2 * Math.PI, true);
+  g.fillStyle = 'rgba(150,160,170,0.35)'; g.fill('evenodd');
+  g.beginPath();
+  for (let a = 0; a <= 360; a += 2) { const [x, y] = px(a, horizonAt(site, a % 360)); a ? g.lineTo(x, y) : g.moveTo(x, y); }
+  g.closePath(); g.strokeStyle = 'rgba(255,255,255,0.75)'; g.lineWidth = 2; g.stroke();
+  // rings (30, 20, 10 deg) and the horizon (0 deg), crosshair
+  g.strokeStyle = 'rgba(120,200,230,0.28)'; g.lineWidth = 1.5;
+  for (const el of [30, 20, 10]) { g.beginPath(); g.arc(cx, cy, rOf(el), 0, 2 * Math.PI); g.stroke(); }
+  g.strokeStyle = 'rgba(120,200,230,0.7)'; g.lineWidth = 2.5; g.beginPath(); g.arc(cx, cy, R, 0, 2 * Math.PI); g.stroke();
+  g.strokeStyle = 'rgba(120,200,230,0.22)'; g.lineWidth = 1.5;
+  g.beginPath(); g.moveTo(cx - R, cy); g.lineTo(cx + R, cy); g.moveTo(cx, cy - R); g.lineTo(cx, cy + R); g.stroke();
+  // field of view wedge (what the panorama shows)
+  const fov = Math.min(360, c.dataset.fov ? Number(c.dataset.fov) : 120);
+  g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R, ang(lookAz - fov / 2), ang(lookAz + fov / 2)); g.closePath();
+  g.fillStyle = 'rgba(80,190,210,0.20)'; g.fill();
+  g.strokeStyle = 'rgba(160,230,245,0.8)'; g.lineWidth = 2; g.stroke();
+  g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + R * Math.cos(ang(lookAz)), cy + R * Math.sin(ang(lookAz))); g.strokeStyle = '#fff'; g.lineWidth = 3; g.stroke();
+  // Earth and Sun: dim when the terrain hides them
+  const mark = (az, el, up, letter, color, ring) => {
+    const [x, y] = px(az, el);
+    g.globalAlpha = up ? 1 : 0.45;
+    g.beginPath(); g.arc(x, y, 13, 0, 2 * Math.PI);
+    if (ring) { g.fillStyle = 'rgba(8,16,22,0.9)'; g.fill(); g.strokeStyle = color; g.lineWidth = 3; g.stroke(); } else { g.fillStyle = color; g.fill(); }
+    g.fillStyle = ring ? color : '#1a1200'; g.font = '700 15px system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(letter, x, y + 1);
+    g.globalAlpha = 1;
+  };
+  mark(ev.earthAz, ev.earthEl, ev.earthUp, 'E', '#4fd0e8', true);
+  mark(ev.sunAz, ev.sunEl, ev.sunFrac > 0, 'S', '#ffa31a', false);
+  // labels
+  g.fillStyle = 'rgba(190,225,240,0.9)'; g.font = '700 22px ui-monospace, Menlo, Consolas, monospace';
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('N', cx, cy - R - 20);
+  g.fillStyle = 'rgba(255,255,255,0.9)'; g.textAlign = 'left'; g.font = '700 16px ui-monospace, Menlo, Consolas, monospace';
+  const near = (a, b) => Math.abs(angDiff(a, b)) < 4;
+  const dir = near(lookAz, ev.sunAz) ? 'SUN' : near(lookAz, ev.earthAz) ? 'EARTH' : ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(((lookAz % 360) + 360) % 360 / 45) % 8];
+  g.fillText(`HDG ${String(Math.round(lookAz) % 360).padStart(3, '0')}\u00b0 \u00b7 ${dir}`, 10, 22);
+  g.fillStyle = 'rgba(130,210,240,0.95)'; g.textAlign = 'center'; g.font = '700 18px ui-monospace, Menlo, Consolas, monospace';
+  g.fillText(`FOV ${Math.round(fov)}\u00b0`, cx, W - 14);
+}
+$('radar').onclick = (e) => {                                          // click the radar to turn the view there
+  const r = e.currentTarget.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+  turnPanorama(((Math.atan2(y, x) / DEG + 90) % 360 + 360) % 360);
+};
+
 function sightText(ev) {                                              // words for the card
   const fmt = (x) => Math.abs(x).toFixed(1);
   const one = (el, h, up, frac, name) => {
@@ -1358,6 +1417,8 @@ function updateCard(hour, now) {
     lookInit = true;
   }
   drawView(site, ev, Number($('lookAz').value));
+  $('radar').dataset.fov = String(Math.round($('view').width / PX));
+  drawRadar(site, ev, Number($('lookAz').value));
 
   // Sunlight
   const au2 = (AU_KM / ev.sunKm) ** 2;

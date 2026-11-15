@@ -192,3 +192,29 @@ body.sidehide #hud { display: none !important; }
 body.sidehide #timebar { left: 12px; }
 body.uihide #burger { display: none !important; }
 @media (max-width: 900px) { #topbar { left: 64px; top: 12px; right: 12px; } #hud { top: 62px; } #uiToggle { display: none; } }
+
+/* the height-colour key is its own small panel, so the top bar never changes size */
+#topbar #legend { display: none; }
+#legend { position: fixed; top: 66px; left: 336px; z-index: 24; width: 280px; padding: 10px 12px; gap: 6px; flex-direction: column; margin: 0; }
+#legend[style*="block"] { display: flex !important; }
+#legend #legBar { width: 100%; }
+#legend .lgl { width: 100%; display: flex; justify-content: space-between; font-size: 11px; }
+#legend > label { display: flex; justify-content: space-between; align-items: center; margin: 6px 0 0; }
+body.uihide #legend { display: none !important; }
+body.sidehide #legend { left: 64px; }
+/* no explanation texts: the controls speak for themselves */
+#heatNote, #legNote, #freeHelp, #padNote, #viewNote, .sight .note, #hud .hint, .field .hint { display: none !important; }
+#legend > label span, .field > label span { display: none !important; }
+
+/* ground-height colour key lives in the site card; the 3D relief is always the true terrain (no control) */
+#card #legend { position: static; display: none; width: auto; padding: 0; margin: 10px 0 4px; background: none; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+#card #legend[style*="block"] { display: block !important; }
+#card #legend .lgl { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; }
+#card #legend #legBar { width: 100%; height: 10px; }
+/* line of sight is removed */
+.sight { display: none !important; }
+
+/* compass radar in the site card */
+#radar { display: block; width: 240px; height: 240px; margin: 12px auto 4px; cursor: pointer; }
+
+#card canvas#view, #card .sub[hidden] { display: none !important; }

@@ -130,22 +130,13 @@
       <div class="field fbtn"><label>Camera</label><button id="free">Free fly</button></div>
       <label class="gridrow"><input id="grat" type="checkbox" /> Grid</label>
     </div>
-    <div id="legend">
-      <div id="legBar"></div>
-      <div class="lgl"><span id="legLo"></span><span>ground height</span><span id="legHi"></span></div>
-      <div class="note" id="legNote"></div>
-      <label for="relief">3D relief <span>raise the ground</span></label>
-      <select id="relief" title="Raise the ground in 3D from the real heights">
-        <option value="0">Off (flat)</option>
-        <option value="1" selected>True height</option>
-        <!-- <option value="3">3D relief: 3 times taller</option> -->
-      </select>
-    </div>
     <div class="note" id="heatNote"></div>
     <div class="note" id="freeHelp" style="display:none">Drag = look. W/S forward-back, A/D left-right, R/F up-down, Q/E roll, wheel = forward-back, Shift = slow. You slow down automatically near a surface.</div>
     <div class="note" id="padNote" style="display:none"></div>
   </div>
 
+
+  <select id="relief" hidden><option value="1" selected>True height</option></select>
   <button id="burger" title="Show or hide the left menu (places and sites)" aria-label="Menu" aria-expanded="true"><i></i><i></i><i></i></button>
   <button id="uiToggle" title="Hide or show the panels (key H)">Hide panels</button>
 
@@ -160,7 +151,7 @@
     <div class="row">
       <button id="rOpen" title="Pick a landing date and see the sites ranked for the stay">Site ranking</button>
     </div>
-    <div class="sub">Sites (click a dot or a name)</div>
+    <div class="sub">Sites</div>
     <div class="sites" id="sites"></div>
     <div id="err"></div>
   </div>
@@ -195,14 +186,21 @@
       <div class="kpi"><div class="t">Sunlight now</div><div class="v" id="kSun"></div><div class="d" id="kSunD"></div></div>
       <div class="kpi"><div class="t">Earth link now</div><div class="v" id="kEarth"></div><div class="d" id="kEarthD"></div></div>
     </div>
-    <div class="sub">View from the site (true angular scale)</div>
-    <canvas id="view" class="v" width="800" height="300"></canvas>
+    <div id="legend">
+      <div class="sub">Ground height</div>
+      <div id="legBar"></div>
+      <div class="lgl"><span id="legLo"></span><span id="legHi"></span></div>
+      <div class="note" id="legNote"></div>
+    </div>
+    <div class="sub" hidden>View from the site (true angular scale)</div>
+    <canvas id="view" class="v" width="800" height="300" hidden></canvas>
     <div class="look">
       <span>Look</span>
       <input id="lookAz" type="range" min="0" max="360" step="1" value="0" />
       <button id="lookSun">Sun</button>
       <button id="lookEarth">Earth</button>
     </div>
+    <canvas id="radar" width="380" height="380" title="Click to turn the view"></canvas>
     <div class="note" id="viewNote"></div>
     <div class="sight">
       <div class="sightHead"><span>Line of sight</span><label><input id="sightOn" type="checkbox" checked /> show lines</label></div>
