@@ -1410,6 +1410,12 @@ $('tStart').textContent = new Date(T0_MS).toISOString().slice(0, 10);
 $('tEnd').textContent = new Date(T0_MS + (N - 1) * STEP_H * 3600e3).toISOString().slice(0, 10);
 const paintSlider = () => slider.style.setProperty('--p', (100 * hour / Math.max(1, N - 1)).toFixed(2) + '%');
 const stepDay = (d) => { hour = THREE.MathUtils.clamp(hour + d * 24 / STEP_H, 0, N - 1); slider.value = String(hour); };
+// hide / show all panels (button or key H), so the 3D view can be seen clean
+const toggleUI = () => { const h = document.body.classList.toggle('uihide'); $('uiToggle').textContent = h ? 'Show panels' : 'Hide panels'; };
+$('uiToggle').onclick = toggleUI;
+// hamburger: show or hide the left menu (places to go + the site list)
+$('burger').onclick = () => { const h = document.body.classList.toggle('sidehide'); $('burger').setAttribute('aria-expanded', String(!h)); };
+window.addEventListener('keydown', (e) => { if ((e.key === 'h' || e.key === 'H') && !e.ctrlKey && !e.metaKey && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName || '')) toggleUI(); });
 $('tPrev').onclick = () => stepDay(-1);
 $('tNext').onclick = () => stepDay(1);
 
